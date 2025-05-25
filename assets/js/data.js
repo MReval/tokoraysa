@@ -17,11 +17,13 @@ function formatProductName(filename) {
 
 gorenganImages.forEach(filename => {
     const productName = formatProductName(filename);
+    const priceUnits = Math.floor(Math.random() * (14 - 4 + 1) + 4); // 4 to 14 units of 500
+    const productPrice = priceUnits * 500; // Generates 2000, 2500, ..., 7000
     productsData.push({
         id: currentId,
         name: productName,
         category: 'Gorengan',
-        price: 0, // Placeholder
+        price: productPrice,
         image: 'assets/gorengan/' + filename,
         description: 'Nikmati kelezatan ' + productName + ' kami!', // Placeholder
         howToBuy: 'Hubungi kami untuk pemesanan.' // Placeholder
@@ -31,11 +33,19 @@ gorenganImages.forEach(filename => {
 
 nonGorenganImages.forEach(filename => {
     const productName = formatProductName(filename);
+    let productPrice;
+    if (filename === "LontongSayur.jpg") {
+        const lontongPriceUnits = Math.floor(Math.random() * (50 - 30 + 1) + 30); // 30 to 50 units of 500
+        productPrice = lontongPriceUnits * 500; // Generates 15000, 15500, ..., 25000
+    } else {
+        const priceUnits = Math.floor(Math.random() * (30 - 6 + 1) + 6); // 6 to 30 units of 500
+        productPrice = priceUnits * 500; // Generates 3000, 3500, ..., 15000
+    }
     productsData.push({
         id: currentId,
         name: productName,
         category: 'Non Gorengan',
-        price: 0, // Placeholder
+        price: productPrice,
         image: 'assets/non gorengan/' + filename,
         description: 'Nikmati kelezatan ' + productName + ' kami!', // Placeholder
         howToBuy: 'Hubungi kami untuk pemesanan.' // Placeholder

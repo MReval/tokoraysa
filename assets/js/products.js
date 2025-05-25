@@ -21,7 +21,10 @@ function displayProducts(productsToDisplay) {
                         <h5 class="card-title">${product.name}</h5>
                         <p class="card-text">Kategori: ${product.category}</p>
                         <p class="card-text">Harga: Rp ${product.price.toLocaleString()}</p>
-                        <a href="produk-detail.html?id=${product.id}" class="btn btn-primary mt-auto">Detail</a>
+                        <div class="mt-auto">
+                            <a href="produk-detail.html?id=${product.id}" class="btn btn-primary">Detail</a>
+                            <button class="btn btn-success ms-2" onclick="addToCart(${product.id})">Add to Cart</button>
+                        </div>
                     </div>
                 </div>
             </div>
