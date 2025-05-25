@@ -1,19 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
 
-#beranda{
-    background-image: url('kue-beranda.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    width: 100%;
-    height: 100vh;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 6rem;
-    color: white; /* Added for better text visibility on image */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Added for better text visibility */
-}
-
 /* General Body Styles */
 body {
     font-family: 'Nunito', sans-serif;
@@ -31,12 +17,105 @@ body {
     font-weight: 600;
 }
 
-/* Product Page (produk.html) Styles */
-.card {
-    border: 1px solid #e0e0e0; /* Softer border than default */
+/* Homepage Specific Styles */
+/* ------------------------- */
+
+.hero-section {
+    background: url('assets/kue-beranda.jpg') no-repeat center center;
+    background-size: cover;
+    height: 70vh; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45); /* Dark overlay for readability */
+}
+
+.hero-content {
+    position: relative; 
+    z-index: 1;
+}
+
+.hero-content .display-4 { /* display-4 is used for h1 */
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.hero-content .lead { /* lead is used for p */
+    font-size: 1.25rem; /* Bootstrap's default lead size */
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.section-padding {
+    padding: 60px 0;
+}
+
+#produk-unggulan .card-title { /* Specific to featured product cards */
+    font-size: 1.2rem; 
+    font-weight: 600; /* Ensure it's bold like other card titles */
+}
+
+.featured-product-card img { /* For featured product cards on homepage */
+    height: 250px; 
+    object-fit: cover;
+}
+
+#keunggulan-kami .card {
+    border: none; /* Remove border for a cleaner look as section has bg-light */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07); /* Subtle shadow for depth */
+}
+
+#keunggulan-kami .card-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-size: 1.15rem; /* Slightly adjusted for emphasis */
+}
+
+/* Footer (Tentang Kami & Kontak) */
+footer#tentang-kontak {
+    background-color: #343a40; /* Dark background for footer */
+    color: #f8f9fa; /* Light text for footer */
+    /* .section-padding class will provide padding */
+}
+
+footer#tentang-kontak h3 {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+footer#tentang-kontak p {
+    color: #ced4da; /* Slightly muted light text */
+}
+
+footer#tentang-kontak hr {
+    border-top: 1px solid #495057;
+}
+
+footer#tentang-kontak .small {
+    color: #adb5bd;
+}
+
+
+/* Product Page (produk.html) & General Card Styles */
+/* ------------------------------------------------- */
+.card { /* General card styling, applies to produk.html and homepage unless overridden */
+    border: 1px solid #e0e0e0; 
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
-    border-radius: 0.375rem; /* Bootstrap's default card radius */
+    border-radius: 0.375rem; 
+    background-color: #ffffff; /* Ensure cards are white */
 }
 
 .card:hover {
@@ -44,69 +123,69 @@ body {
     box-shadow: 0 6px 12px rgba(0,0,0,0.1);
 }
 
-.card-title {
+.card-title { /* General card titles */
     font-weight: 600; 
-    color: #495057; /* Slightly lighter than body text for titles */
-    font-size: 1.1rem; /* Ensure title is prominent */
+    color: #495057; 
+    font-size: 1.1rem; 
 }
 
-.card-text {
+.card-text { /* General card text */
     font-size: 0.95rem;
-    color: #6c757d; /* Bootstrap's text-muted color */
+    color: #6c757d; 
 }
 
-.card-img-top {
-    border-bottom: 1px solid #f0f0f0; /* Very subtle separator */
-    /* max-height: 200px; /* Ensure images don't get too large - this is in JS, ensure consistency */
-    /* object-fit: cover; /* Ensure image covers the area well - this is in JS, ensure consistency */
+.card-img-top { /* For product listing cards on produk.html */
+    border-bottom: 1px solid #f0f0f0; 
+    height: 200px; 
+    object-fit: cover; 
 }
 
 /* Ensure card body in product list has enough space and consistent button placement */
 #product-container .card .card-body {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Pushes button to the bottom */
-    min-height: 190px; /* Adjust as needed, make sure it accommodates content well */
+    justify-content: space-between; 
+    min-height: 190px; /* Adjust as needed */
 }
 
 #product-container .card .btn {
-    margin-top: 1rem; /* Ensures some space above the button, works with flex space-between */
+    margin-top: 1rem; 
 }
 
 
-/* Sorting and Filtering Controls */
+/* Sorting and Filtering Controls (produk.html) */
 .form-label {
     font-weight: 500; 
     margin-bottom: 0.5rem;
 }
 
-.container.my-4 .row.mb-3 { /* Targetting the controls row specifically */
-    align-items: center; /* Vertically align label and select if they wrap */
+.container.my-4 .row.mb-3 { /* Targeting the controls row specifically */
+    align-items: center; 
     padding-bottom: 1rem;
-    margin-bottom: 1.5rem !important; /* Ensure spacing below controls */
-    border-bottom: 1px solid #dee2e6; /* Add a separator line */
+    margin-bottom: 1.5rem !important; 
+    border-bottom: 1px solid #dee2e6; 
 }
 
-
 /* Product Detail Page (produk-detail.html) Styles */
-#product-name { /* This is an H1 */
+/* --------------------------------------------- */
+#product-name { 
     font-weight: 700;
     color: #343a40;
     margin-bottom: 0.75rem; 
 }
 
-#product-price { /* This is an H3 */
+#product-price { 
     color: #007bff; 
     font-size: 2rem; 
     font-weight: 600; 
     margin-bottom: 1rem;
 }
 
-#product-category { /* This is a span inside a p */
+#product-category { 
     font-size: 1.1rem;
     color: #555;
 }
-.lead #product-category { /* More specific if needed */
+.lead #product-category { 
     font-weight: 500;
 }
 
@@ -114,17 +193,15 @@ body {
 #product-image {
     border-radius: 0.5rem; 
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    /* max-height: 500px; width: 100%; object-fit: cover; -> already inline, but good to keep in mind */
 }
 
-/* Styling for description and how-to-buy sections */
 .product-detail-section h4 { 
     font-weight: 600;
     margin-top: 1.5rem;
     margin-bottom: 0.75rem;
     color: #444;
     border-bottom: 1px solid #eee;
-    padding-bottom: 0.5rem; /* Space between text and border */
+    padding-bottom: 0.5rem; 
 }
 .product-detail-section p {
     line-height: 1.7; 
@@ -137,7 +214,7 @@ body {
     font-weight: 500;
 }
 
-.btn-success { /* For "Pesan Sekarang (WA)" */
+.btn-success { 
     font-weight: 500;
 }
 
@@ -145,43 +222,50 @@ body {
     font-weight: 500;
 }
 
-/* Section Titles (like "Semua Produk") */
-h1[style="text-align: center;"] { /* This targets the H1 on produk.html */
+/* General Page Titles (like "Semua Produk" on produk.html) */
+h1.page-title { 
     margin-top: 1.5rem;
     margin-bottom: 2rem; 
     font-weight: 600;
     color: #333;
+    text-align: center;
 }
 
 
 /* Responsive adjustments */
 @media (max-width: 992px) { /* lg breakpoint */
-    #product-image {
-        max-height: 400px; /* Adjust image height for medium screens */
+    #product-image { /* product-detail.html */
+        max-height: 400px; 
     }
 }
 
 @media (max-width: 768px) { /* md breakpoint */
-    #beranda {
-        font-size: 3.5rem; 
+    .hero-section {
+        height: 60vh; 
+    }
+    .hero-content .display-4 {
+        font-size: 2.5rem; 
+    }
+     .hero-content .lead {
+        font-size: 1.1rem; 
     }
 
-    #product-container .card .card-body {
+    #product-container .card .card-body { /* produk.html */
         min-height: auto; 
     }
 
-    #product-name {
+    #product-name { /* product-detail.html */
         font-size: 1.75rem; 
     }
-    #product-price {
+    #product-price { /* product-detail.html */
         font-size: 1.75rem; 
     }
 
-    h1[style="text-align: center;"] {
+    h1.page-title { /* e.g. produk.html */
         font-size: 1.75rem; 
         margin-bottom: 1.5rem;
     }
-    .container.my-4 .row.mb-3 {
+    .container.my-4 .row.mb-3 { /* produk.html filter/sort row */
         padding-bottom: 0.5rem;
         margin-bottom: 1rem !important;
     }
@@ -191,20 +275,26 @@ h1[style="text-align: center;"] { /* This targets the H1 on produk.html */
     .navbar-nav {
         text-align: center; 
     }
-     #beranda {
-        font-size: 2.5rem;
+    .hero-section {
+        height: 50vh;
     }
-    #product-name {
+     .hero-content .display-4 {
+        font-size: 2rem;
+    }
+    .hero-content .lead {
+        font-size: 1rem;
+    }
+    #product-name { /* product-detail.html */
         font-size: 1.5rem; 
     }
-    #product-price {
+    #product-price { /* product-detail.html */
         font-size: 1.5rem; 
     }
-     h1[style="text-align: center;"] {
+     h1.page-title { /* e.g. produk.html */
         font-size: 1.5rem; 
     }
-    /* Stack product image and details cleanly */
-    .col-lg-6.mb-4.mb-lg-0 { /* Image column */
+    /* Stack product image and details cleanly on product-detail page */
+    .col-lg-6.mb-4.mb-lg-0 { /* product-detail.html image column */
         margin-bottom: 1.5rem !important;
     }
 }
