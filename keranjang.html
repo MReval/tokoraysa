@@ -9,18 +9,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <style>
-        /* Minor custom style for cart item images */
-        .cart-item-image { /* Renamed for clarity */
+        .cart-item-image {
             max-height: 80px;
-            max-width: 100px; /* Added to prevent oversized images if aspect ratio is very wide */
+            max-width: 100px;
             object-fit: cover;
-            border-radius: 0.25rem; /* Match Bootstrap's rounded class */
+            border-radius: 0.25rem;
         }
         #cart-total {
             font-size: 1.25rem;
             font-weight: bold;
             margin-top: 20px;
             margin-bottom: 20px;
+        }
+        .quantity-display {
+            display: inline-block;
+            min-width: 30px; /* Ensure some space for the number */
+            text-align: center;
         }
     </style>
 </head>
@@ -63,7 +67,62 @@
             <!-- Cart total will be displayed here -->
         </div>
 
-        <div class="text-end mb-5">
+        <!-- Checkout Section (Initially Hidden) -->
+        <div id="checkout-section" class="my-4" style="display: none;">
+            <h3 class="mb-3">Alamat Pengiriman</h3>
+            <form id="address-form">
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-control" id="fullName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="addressLine1" class="form-label">Alamat Baris 1</label>
+                    <input type="text" class="form-control" id="addressLine1" required>
+                </div>
+                <div class="mb-3">
+                    <label for="addressLine2" class="form-label">Alamat Baris 2 (Opsional)</label>
+                    <input type="text" class="form-control" id="addressLine2">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="city" class="form-label">Kota</label>
+                        <input type="text" class="form-control" id="city" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="postalCode" class="form-label">Kode Pos</label>
+                        <input type="text" class="form-control" id="postalCode" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Nomor Telepon</label>
+                    <input type="tel" class="form-control" id="phoneNumber" required>
+                </div>
+            </form>
+
+            <h3 class="mt-4 mb-3">Detail Pembayaran</h3>
+            <p>Metode Pembayaran: Visa / Mastercard (Mock - No Real Transaction)</p>
+            <form id="payment-form">
+                <div class="mb-3">
+                    <label for="cardNumber" class="form-label">Nomor Kartu</label>
+                    <input type="text" class="form-control" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="expiryDate" class="form-label">Tanggal Kadaluarsa (MM/YY)</label>
+                        <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="text" class="form-control" id="cvv" placeholder="XXX">
+                    </div>
+                </div>
+            </form>
+
+            <button id="confirm-order-button" class="btn btn-success btn-lg mt-4 w-100">Konfirmasi Pesanan</button>
+        </div>
+        <!-- End of Checkout Section -->
+
+        <div id="cart-actions-buttons" class="text-end mb-5">
             <button id="clear-cart-button" class="btn btn-danger me-2">Clear Cart</button>
             <button id="checkout-button" class="btn btn-primary">Checkout</button>
         </div>
@@ -72,89 +131,154 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
         crossorigin="anonymous"></script>
-    <script src="assets/js/data.js"></script> <!-- productsData might be used by cart.js if not all details are stored in cart items -->
+    <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/data.js"></script>
     <script src="assets/js/cart.js"></script>
     <script>
-        function displayCart() {
-            const cartItems = window.getCartItems(); // From cart.js, ensuring we use the global one
-            const cartContainer = document.getElementById('cart-items-container');
-            const cartTotalElement = document.getElementById('cart-total');
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const cartTotalElement = document.getElementById('cart-total');
+        const checkoutSection = document.getElementById('checkout-section');
+        const cartActionsButtons = document.getElementById('cart-actions-buttons');
+        const clearCartButton = document.getElementById('clear-cart-button');
+        const checkoutButton = document.getElementById('checkout-button');
+        const confirmOrderButton = document.getElementById('confirm-order-button');
 
-            if (!cartContainer || !cartTotalElement) {
+        function displayCart() {
+            const cartItems = window.getCartItems();
+            
+            if (!cartItemsContainer || !cartTotalElement) {
                 console.error("Cart container or total element not found!");
                 return;
             }
 
-            cartContainer.innerHTML = ''; // Clear previous content
+            cartItemsContainer.innerHTML = '';
             let total = 0;
 
             if (cartItems.length === 0) {
-                cartContainer.innerHTML = '<p class="text-center">Keranjang Anda kosong.</p>';
+                cartItemsContainer.innerHTML = '<p class="text-center">Keranjang Anda kosong.</p>';
                 cartTotalElement.innerHTML = 'Total: Rp 0';
-                return;
+                if (cartActionsButtons) cartActionsButtons.style.display = 'none'; // Hide if cart is empty
+                if (checkoutSection.style.display !== 'block') { // Only hide if not in checkout process
+                     // No, if cart is empty, checkout button should be hidden.
+                }
+            } else {
+                cartItems.forEach(item => {
+                    const itemPrice = parseFloat(item.price) || 0;
+                    const itemQuantity = parseInt(item.quantity) || 0;
+                    total += (itemPrice * itemQuantity);
+
+                    const cartItemHTML = `
+                        <div class="cart-item row mb-3 p-2 border rounded align-items-center">
+                            <div class="col-md-2 col-3">
+                                <img src="${item.image}" alt="${item.name}" class="img-fluid cart-item-image">
+                            </div>
+                            <div class="col-md-3 col-9">
+                                <h5>${item.name}</h5>
+                            </div>
+                            <div class="col-md-2 col-5 text-md-start text-lg-center mt-2 mt-md-0">
+                                <p>Rp ${itemPrice.toLocaleString()}</p>
+                            </div>
+                            <div class="col-md-3 col-7 d-flex align-items-center justify-content-start justify-content-md-center mt-2 mt-md-0">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="decrementAndUpdateDisplay(${item.id})">-</button>
+                                <span class="mx-2 quantity-display">${itemQuantity}</span>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="incrementAndUpdateDisplay(${item.id})">+</button>
+                            </div>
+                            <div class="col-md-2 col-12 text-md-end mt-2 mt-md-0">
+                                <button class="btn btn-sm btn-outline-danger w-100" onclick="removeItemAndUpdateDisplay(${item.id})">Remove</button>
+                            </div>
+                        </div>
+                    `;
+                    cartItemsContainer.innerHTML += cartItemHTML;
+                });
+                cartTotalElement.innerHTML = `Total: Rp ${total.toLocaleString()}`;
+                // Show action buttons only if not in checkout mode and cart is not empty
+                if (checkoutSection.style.display === 'none' && cartActionsButtons) {
+                    cartActionsButtons.style.display = 'block'; 
+                } else if (cartActionsButtons) { // if in checkout mode, ensure they are hidden
+                    cartActionsButtons.style.display = 'none';
+                }
             }
-
-            cartItems.forEach(item => {
-                // Assuming item.price is stored in the cart item by cart.js
-                // If item.price is missing, it will be treated as 0 or NaN later, so ensure it's always present in cart items
-                const itemPrice = parseFloat(item.price) || 0; // Ensure price is a number
-                total += itemPrice;
-
-                const cartItemHTML = `
-                    <div class="cart-item row mb-3 p-2 border rounded align-items-center">
-                        <div class="col-md-2 col-4">
-                            <img src="${item.image}" alt="${item.name}" class="img-fluid cart-item-image">
-                        </div>
-                        <div class="col-md-3 col-8">
-                            <h5>${item.name}</h5>
-                        </div>
-                        <div class="col-md-3 col-6 text-md-start text-lg-end mt-2 mt-md-0">
-                            <p>Rp ${itemPrice.toLocaleString()}</p>
-                        </div>
-                        <div class="col-md-2 col-6 text-md-center mt-2 mt-md-0">
-                            <!-- Future: Quantity input can go here -->
-                        </div>
-                        <div class="col-md-2 col-12 text-md-end mt-2 mt-md-0">
-                            <button class="btn btn-sm btn-outline-danger w-100" onclick="removeItemAndUpdateDisplay(${item.id})">Remove</button>
-                        </div>
-                    </div>
-                `;
-                cartContainer.innerHTML += cartItemHTML;
-            });
-
-            cartTotalElement.innerHTML = `Total: Rp ${total.toLocaleString()}`;
+             // Ensure visibility is correctly set after cart display logic
+            if (cartItems.length === 0 && checkoutSection.style.display === 'none') {
+                if (cartActionsButtons) cartActionsButtons.style.display = 'none';
+            }
         }
 
-        // Controller function for keranjang.html to interact with cart.js and update display
+        function decrementAndUpdateDisplay(productId) {
+            window.decrementItem(productId);
+            displayCart();
+        }
+
+        function incrementAndUpdateDisplay(productId) {
+            window.incrementItem(productId);
+            displayCart();
+        }
+
         function removeItemAndUpdateDisplay(productId) {
-            window.removeFromCart(productId); // From cart.js, ensuring we use the global one
-            displayCart(); // Refresh the cart display
+            const item = window.getCartItems().find(i => i.id === productId);
+            window.removeFromCart(productId);
+            if (item) {
+                showToast(item.name + ' removed from cart.', 'info');
+            } else {
+                showToast('Item removed from cart.', 'info');
+            }
+            displayCart();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            displayCart(); // Initial display
+            displayCart(); // Initial display and button visibility setup
 
-            const checkoutButton = document.getElementById('checkout-button');
             if (checkoutButton) {
                 checkoutButton.addEventListener('click', () => {
                     if (window.getCartItems().length === 0) {
-                        alert("Keranjang Anda kosong. Tidak ada yang bisa di-checkout.");
+                        showToast("Keranjang Anda kosong. Tambahkan item terlebih dahulu!", 'info');
                         return;
                     }
-                    window.clearCart(); // From cart.js
-                    displayCart(); // Refresh the cart display
-                    alert("Checkout successful!");
+                    cartItemsContainer.style.display = 'none';
+                    cartTotalElement.style.display = 'none';
+                    if (cartActionsButtons) cartActionsButtons.style.display = 'none';
+                    checkoutSection.style.display = 'block';
                 });
             }
 
-            const clearCartButton = document.getElementById('clear-cart-button');
             if (clearCartButton) {
                 clearCartButton.addEventListener('click', () => {
-                    window.clearCart(); // From cart.js
-                    displayCart(); // Refresh the cart display
+                    const currentCartItems = window.getCartItems();
+                    window.clearCart();
+                    if (currentCartItems.length > 0) {
+                        showToast('Cart cleared.', 'info');
+                    }
+                    displayCart(); // Will also hide cartActionsButtons as cart is now empty
+                });
+            }
+
+            if (confirmOrderButton) {
+                confirmOrderButton.addEventListener('click', () => {
+                    const fullName = document.getElementById('fullName').value.trim();
+                    const addressLine1 = document.getElementById('addressLine1').value.trim();
+
+                    if (!fullName || !addressLine1) {
+                        showToast('Harap isi semua field alamat yang wajib diisi (Nama Lengkap & Alamat Baris 1).', 'error');
+                        return;
+                    }
+
+                    window.clearCart();
+                    showToast('Order placed successfully! Thank you for your purchase.', 'success');
+                    
+                    checkoutSection.style.display = 'none';
+                    cartItemsContainer.style.display = 'block';
+                    cartTotalElement.style.display = 'block';
+                    
+                    // Reset form fields (optional but good practice)
+                    document.getElementById('address-form').reset();
+                    document.getElementById('payment-form').reset();
+
+                    displayCart(); // Refresh cart (will show empty message and hide action buttons)
                 });
             }
         });
     </script>
+
+    <div id="toast-container"></div>
 </body>
 </html>
